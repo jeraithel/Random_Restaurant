@@ -21,6 +21,9 @@ var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
 
+var userDistance = 7;
+var userRating = 3;
+
 function getCuisines (lat,long) {
 
 console.log ("Inside getCuisines Lat: " + lat);
@@ -77,6 +80,56 @@ $(document).on("click", ".cuisine2", function() {
     $("#cuisine-button2").text(cuisineSelection);
 });
 
+// reads defaults from local storage, then sets up listeners on buttons
+function setupDistanceRating() {
+    console.log("setup distance and rating");
+    if ( localStorage.getItem("restaurantDistance") === null) {
+        localStorage.setItem("restaurantDistance", userDistance);
+    }
+    else {
+        userDistance = localStorage.getItem("restaurantDistance")
+    }
+    if (localStorage.getItem("restaurantRating") === null) {
+        localStorage.setItem("restaurantRating", userRating);
+    }
+    else {
+        userRating = localStorage.getItem("restaurantRating")
+    }
+    console.log("distance = " + userDistance + " rating = " + userRating);
+    // update the defaults on screen
+    $("#distanceBox").attr("placeholder",userDistance);
+    $("#ratingBox").attr("placeholder",userRating);
+    // set up listeners ( one for form, other for button)
+    $("#distanceBox").on("click", function(event) {
+        event.preventDefault(); // form submit so don't post
+        userDistance = $("#distanceBox").val().trim();
+        console.log("User distance " + userDistance);
+        $("#distanceBox").attr("placeholder",userDistance);
+    });
+    $(".distanceItem").on("click", function() {
+        userDistance = $(this).attr("data-value");
+        console.log("User distance from button " + userDistance);
+        // update local storage and displayed text
+        localStorage.setItem("restaurantDistance", userDistance);
+        $("#distanceBox").attr("placeholder",userDistance);
+    })
+    $("#ratingBox").on("click", function (event) {
+        event.preventDefault(); // form submit so don't post
+        userDistance = $("#distanceBox").val().trim();
+        console.log("User rating " + userRating);
+        $("#ratingBox").attr("placeholder",userRating);
+    });
+    $(".ratingItem").on("click", function () {
+        userRating = $(this).attr("data-value");
+        console.log("User rating from button " + userRating);
+        // update local storage and displayed text
+        localStorage.setItem("restaurantRating", userRating);
+        $("#ratingBox").attr("placeholder", userRating);
+    })
+
+
+    
+}
 // Geolocation
 // Geolocation takes time so need to call main() function after geolocation has completed
 
@@ -115,5 +168,6 @@ function main(currentLatitude, currentLongitude) {
     
     console.log(navigator)
     getCuisines(currentLatitude,currentLongitude);
+    setupDistanceRating();
 }
 getLocation();

@@ -5,3 +5,11 @@ img {
 h3 {
     padding: 15px;
 }
+
+
+#distanceForm {
+    width: 20%;
+}
+#ratingForm {
+    width: 20%;
+}

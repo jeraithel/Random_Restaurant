@@ -55,6 +55,64 @@
                 <div id="selectionImage1"></div>
             </div>
         </div>
+        <div class="row"> 
+            <!-- distance selector-->
+            <div class="col-md-6">
+                <div class="container">
+                <form>
+                    <div class="form-group" id="distanceForm">
+                        <label for="distanceBox"><h4>Distance</h4></label>
+                        <input class="form-control" type="text" id="distanceBox"></input>
+                    </div>
+                </form>
+                <div class="container float-left">
+                    <div class="btn-group float-left" id="distanceButtonGroup" role="group">
+                        <button type="button" id="distanceButton" class="btn btn-info dropdown-toggle float-left" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            Distance
+                        </button>
+                        <div class="dropdown-menu float-left" id="distanceMenu">
+                            <a class="dropdown-item distanceItem" href="#" data-value="5">5</a>
+                            <a class="dropdown-item distanceItem" href="#" data-value="7">7</a>
+                            <a class="dropdown-item distanceItem" href="#" data-value="10">10</a>
+                            <a class="dropdown-item distanceItem" href="#" data-value="15">15</a>
+                            <a class="dropdown-item distanceItem" href="#" data-value="20">20</a>
+                            <a class="dropdown-item distanceItem" href="#" data-value="30">30</a>
+                        </div>
+                    </div>
+                </div>
+                    
+                
+                </div>
+            </div>
+            <!-- rating selector -->
+            <div class="col-md-6 text-center">
+            <form>
+                <div class="form-group" id="ratingForm">
+                    <label for="ratingBox">
+                        <h4>Rating</h4>
+                    </label>
+                    <input class="form-control" type="text" id="ratingBox"></input>
+                </div>
+                <div class="btn-group float-left" id="ratingButtonGroup">
+                    <button type="button" id="ratingButton" class="btn btn-info dropdown-toggle float-left" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Rating
+                    </button>
+                    <div class="dropdown-menu float-left" id="ratingMenu">
+                        <a class="dropdown-item ratingItem" href="#" data-value="1">1</a>
+                        <a class="dropdown-item ratingItem" href="#" data-value="2">2</a>
+                        <a class="dropdown-item ratingItem" href="#" data-value="3">3</a>
+                        <a class="dropdown-item ratingItem" href="#" data-value="4">4</a>
+                        <a class="dropdown-item ratingItem" href="#" data-value="5">5</a>
+                    </div>
+                </div>
+            
+            </form>
+            </div>
+
+        </div>
+
     </div>
     <br>
     <!--Add in Rating and Distance buttons or scales here-->
