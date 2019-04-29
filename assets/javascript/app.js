@@ -100,7 +100,7 @@ function setupDistanceRating() {
     $("#distanceBox").attr("placeholder",userDistance);
     $("#ratingBox").attr("placeholder",userRating);
     // set up listeners ( one for form, other for button)
-    $("#distanceBox").on("click", function(event) {
+    $("#distanceFormButton").on("click", function(event) {
         event.preventDefault(); // form submit so don't post
         userDistance = $("#distanceBox").val().trim();
         console.log("User distance " + userDistance);
@@ -113,7 +113,7 @@ function setupDistanceRating() {
         localStorage.setItem("restaurantDistance", userDistance);
         $("#distanceBox").attr("placeholder",userDistance);
     })
-    $("#ratingBox").on("click", function (event) {
+    $("#ratingFormButton").on("click", function (event) {
         event.preventDefault(); // form submit so don't post
         userDistance = $("#distanceBox").val().trim();
         console.log("User rating " + userRating);

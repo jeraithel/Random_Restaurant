@@ -58,33 +58,37 @@
         <div class="row"> 
             <!-- distance selector-->
             <div class="col-md-6">
-                <div class="container">
-                <form>
-                    <div class="form-group" id="distanceForm">
-                        <label for="distanceBox"><h4>Distance</h4></label>
-                        <input class="form-control" type="text" id="distanceBox"></input>
-                    </div>
-                </form>
-                <div class="container float-left">
-                    <div class="btn-group float-left" id="distanceButtonGroup" role="group">
-                        <button type="button" id="distanceButton" class="btn btn-info dropdown-toggle float-left" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            Distance
-                        </button>
-                        <div class="dropdown-menu float-left" id="distanceMenu">
-                            <a class="dropdown-item distanceItem" href="#" data-value="5">5</a>
-                            <a class="dropdown-item distanceItem" href="#" data-value="7">7</a>
-                            <a class="dropdown-item distanceItem" href="#" data-value="10">10</a>
-                            <a class="dropdown-item distanceItem" href="#" data-value="15">15</a>
-                            <a class="dropdown-item distanceItem" href="#" data-value="20">20</a>
-                            <a class="dropdown-item distanceItem" href="#" data-value="30">30</a>
+                <!-- <div class="input-group" style="width:50%;"></div> -->
+                <div>
+                    <form id="distanceForm">
+                        <div class="form-group" id="distanceFormGroup">
+                            <label for="distanceBox"><h4>Distance</h4></label>
+                            <input class="form-control" type="text" id="distanceBox"></input>
+                            <!-- this button is hidden, but allows event from distanceBox to be watched -->
+                            <button  id="distanceFormButton" type="submit" class="btn btn-info" style="display:none">submit</button>
                         </div>
-                    </div>
-                </div>
-                    
-                
+                        <div class="form-group">
+                            <div class="btn-group" id="distanceButtonGroup" role="group">
+                                <button type="button" id="distanceButton" class="btn btn-info dropdown-toggle float-left" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">Distance</button>
+                                
+                                
+                                <div class="dropdown-menu" id="distanceMenu">
+                                    <a class="dropdown-item distanceItem" href="#" data-value="5">5</a>
+                                    <a class="dropdown-item distanceItem" href="#" data-value="7">7</a>
+                                    <a class="dropdown-item distanceItem" href="#" data-value="10">10</a>
+                                    <a class="dropdown-item distanceItem" href="#" data-value="15">15</a>
+                                    <a class="dropdown-item distanceItem" href="#" data-value="20">20</a>
+                                    <a class="dropdown-item distanceItem" href="#" data-value="30">30</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
+                
+                
+            
             <!-- rating selector -->
             <div class="col-md-6 text-center">
             <form>
@@ -93,6 +97,8 @@
                         <h4>Rating</h4>
                     </label>
                     <input class="form-control" type="text" id="ratingBox"></input>
+                    <!-- this button is hidden, but allows event from distanceBox to be watched -->
+                    <button id="ratingFormButton" type="submit" class="btn btn-info" style="display:none">submit</button>
                 </div>
                 <div class="btn-group float-left" id="ratingButtonGroup">
                     <button type="button" id="ratingButton" class="btn btn-info dropdown-toggle float-left" data-toggle="dropdown"

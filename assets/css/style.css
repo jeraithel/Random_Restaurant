@@ -7,9 +7,13 @@ h3 {
 }
 
 
-#distanceForm {
-    width: 20%;
+#distanceBox {
+    width: 30%; 
 }
+/* #distanceForm {
+    margin: 0;
+} */
 #ratingForm {
-    width: 20%;
+    width: 30%;
+    
 }
