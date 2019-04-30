@@ -97,34 +97,34 @@ function setupDistanceRating() {
     }
     console.log("distance = " + userDistance + " rating = " + userRating);
     // update the defaults on screen
-    $("#distanceBox").attr("placeholder",userDistance);
-    $("#ratingBox").attr("placeholder",userRating);
+    $("#distanceBox").val(userDistance);
+    $("#ratingBox").val(userRating);
     // set up listeners ( one for form, other for button)
     $("#distanceFormButton").on("click", function(event) {
         event.preventDefault(); // form submit so don't post
         userDistance = $("#distanceBox").val().trim();
         console.log("User distance " + userDistance);
-        $("#distanceBox").attr("placeholder",userDistance);
+        $("#distanceBox").val(userDistance);
     });
     $(".distanceItem").on("click", function() {
         userDistance = $(this).attr("data-value");
         console.log("User distance from button " + userDistance);
         // update local storage and displayed text
         localStorage.setItem("restaurantDistance", userDistance);
-        $("#distanceBox").attr("placeholder",userDistance);
+        $("#distanceBox").val(userDistance);
     })
     $("#ratingFormButton").on("click", function (event) {
         event.preventDefault(); // form submit so don't post
-        userDistance = $("#distanceBox").val().trim();
+        userRating = $("#ratingBox").val().trim();
         console.log("User rating " + userRating);
-        $("#ratingBox").attr("placeholder",userRating);
+        $("#ratingBox").val(userRating);
     });
     $(".ratingItem").on("click", function () {
         userRating = $(this).attr("data-value");
         console.log("User rating from button " + userRating);
         // update local storage and displayed text
         localStorage.setItem("restaurantRating", userRating);
-        $("#ratingBox").attr("placeholder", userRating);
+        $("#ratingBox").val(userRating);
     })
 
 
