@@ -42,7 +42,7 @@ var userRating = 3;
 var restaurants = {};
 var blacklistedRestaurants = [];
 var visitedRestaurants = [];
-var allowAgainRestaurants = [];
+var allowedRestaurants = [];
 
 function getCuisines(lat, long) {
 
@@ -175,28 +175,22 @@ function createRestArray() {
 };
 
 function getVisitedOrBlacklisted() {
-    visitedRef.on("child_added", function (snapshot) {
-        // fires once for each value in database and once for each new value added
-        console.log("get visited " + snapshot.val());
-        visitedRestaurants.push(JSON.parse(snapshot.val()));
+    visitedRef.on("value", function (snapshot) {
+        console.log("get visited " + snapshot.val().data);
+        visitedRestaurants = JSON.parse(snapshot.val().data);
+        updateTable();
     }, function (errorObject) {
-        console.log("Reading blacklisted data failed: " + errorObject.code);
+        console.log("Reading visited data failed: " + errorObject.code);
     });
-    blacklistRef.on("child_added", function (snapshot) {
-        // fires once for each value in database and once for each new value added
-        blacklistedRestaurants.push(JSON.parse(snapshot.val()));
+    blacklistRef.on("value", function (snapshot) {
+        blacklistedRestaurants = JSON.parse(snapshot.val());
+        updateTable();
     }, function (errorObject) {
-        console.log("Reading visited restaurants data failed: " + errorObject.code);
+        console.log("Reading blacklisted restaurants data failed: " + errorObject.code);
     });
-    blacklistRef.on("child_added", function (snapshot) {
-        // fires once for each value in database and once for each new value added
-        blacklistedRestaurants.push(JSON.parse(snapshot.val()));
-    }, function (errorObject) {
-        console.log("Reading visited restaurants data failed: " + errorObject.code);
-    });
-    allowRef.on("child_added", function (snapshot) {
-        // fires once for each value in database and once for each new value added
-        allowedRestaurants.push(JSON.parse(snapshot.val()));
+    allowRef.on("value", function (snapshot) {
+        allowedRestaurants = JSON.parse(snapshot.val());
+        updateTable();
     }, function (errorObject) {
         console.log("Reading allowed restaurants data failed: " + errorObject.code);
     });
@@ -206,14 +200,59 @@ function getVisitedOrBlacklisted() {
 
 }
 
-
-// used for testing
-function createDummyDataBase(){
-    for (i = 0; i < visitedRestaurants.length; i++) {
-        visitedRef.push( JSON.stringify(visitedRestaurants[i]) );
+// adds restaurant to the visited list and updates database
+function addVisitedRestaurant( name, date, cuisine, city) {
+    // add to front of array so keep in date order
+    for (var i = 0; i < visitedRestaurants.length; i++) {
+        console.log("Before " + i + " " + JSON.stringify(visitedRestaurants[i]));
     }
+    visitedRestaurants.unshift({
+        name: name,
+        date: date,
+        cuisine: cuisine,
+        city: city
+    });
+    // add to database
+    visitedRef.set({ data: JSON.stringify(visitedRestaurants) });
+    for (var i=0; i < visitedRestaurants.length; i++) {
+        console.log(i + " " + JSON.stringify(visitedRestaurants[i])) ;
+    }
+    // watcher will see this and update table
 }
-// used for testing
+
+// function returns a boolean - true if restaurant has not been visited, blacklisted or is in allow list
+function validRestaurant (rName) {
+    // if in allow list, return true
+    if (inArray(rName, allowedRestaurants)) {
+        return true;
+    }
+    if ( inArray(rName, visitedRestaurants) || inArray( rName, blacklistedRestaurants)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+
+
+}
+// check whether a restaurant name is present in an array
+function inArray(rName, rArray) {
+    for( var i = 0; i < rArray.length ; i++) {
+        if (rArray[i].name === rName) {
+            return true;
+        }
+    }
+    // wasn't found return false
+    return false;
+}
+
+// used for testing, not part of main flow
+function createDummyDataBase(){
+    console.log(JSON.stringify(visitedRestaurants));
+    visitedRef.set( {data: JSON.stringify(visitedRestaurants)} );
+    
+}
+// used for testing, not part of main flow
 function createTestData() {
     visitedRestaurants[0] = {
         name: "Freds",
@@ -232,6 +271,12 @@ function createTestData() {
         date: "3/5/2019",
         cuisine: "burgers",
         city: "San Francisco"
+    }
+    visitedRestaurants[3]= {
+        name: "Murder burger",
+        date: "1/4/19",
+        cuisine: "burgers",
+        city: "Davis"
     }
 
 }
@@ -259,7 +304,7 @@ function updateTable() {
 
         var newBlacklistButton = $("<button>");
         newBlacklistButton.attr("id", "blacklist" + String(i));
-        newBlacklistButton.attr("data-value", i);
+        newBlacklistButton.attr("data-value", String(i));
         newBlacklistButton.addClass("blacklistButton");
         newBlacklistButton.text("never again");
         temp = ($("<td>")).append(newBlacklistButton);
@@ -312,7 +357,12 @@ function locationError(error) {
             break;
     }
 }
+// get information from firebase 
 getVisitedOrBlacklisted();
+
+// createTestData();
+// createDummyDataBase();
+
 function main(currentLatitude, currentLongitude) {
     console.log("Latitude: " + currentLatitude);
     console.log("Longitude: " + currentLongitude);
@@ -321,11 +371,17 @@ function main(currentLatitude, currentLongitude) {
     getCuisines(currentLatitude,currentLongitude);
     setupDistanceRating();
 
-    getVisitedOrBlacklisted();
+    
+    addVisitedRestaurant("Here", "3/14/2019", "burger","Folsom");
+    addVisitedRestaurant("Now", "3/14/2019", "burger", "Folsom");
 
-    updateTable();
 
 }
 getLocation();
-//createTestData();
-//createDummyDataBase();
+
+// console.log("Valid restaurant " + validRestaurant("Freds"));
+// console.log("Valid restaurant " + validRestaurant("Elephant"));
+// addVisitedRestaurant("Again", "3/13/2019", "burger","Folsom");
+// addVisitedRestaurant("and again", "3/13/2019", "burger", "Folsom");
+
+
