@@ -1,7 +1,23 @@
 // Setup Firebase Config
 
-// drop firebase config above this line
-// firebase.initializeApp(config);
+// database created by John Webster
+// https://console.firebase.google.com/project/scratchdatabase/database/scratchdatabase/data
+var config = {
+    apiKey: "AIzaSyASaUqEw6TM_1v7LkG0iVZyDUI-WnTIUXg",
+    authDomain: "scratchdatabase.firebaseapp.com",
+    databaseURL: "https://scratchdatabase.firebaseio.com",
+    projectId: "scratchdatabase",
+    storageBucket: "scratchdatabase.appspot.com",
+    messagingSenderId: "652319313164"
+};
+
+firebase.initializeApp(config);
+var database = firebase.database();
+// using sampleUser for now, app could be upgraded to have database for each user
+var dbRef = database.ref("/randomRestaurant/sampleUser");
+var blacklistRef = database.ref("/randomRestaurant/sampleUser/blacklist");
+var visitedRef = database.ref("/randomRestaurant/sampleUser/visited");
+var allowRef = database.ref("/randomRestaurant/sampleUser/allow");
 
 // initializing moment.js
 moment().format();
@@ -24,6 +40,9 @@ var cuisineCombined = [];
 var userDistance = 7;
 var userRating = 3;
 var restaurants = {};
+var blacklistedRestaurants = [];
+var visitedRestaurants = [];
+var allowAgainRestaurants = [];
 
 function getCuisines(lat, long) {
 
@@ -155,6 +174,102 @@ function createRestArray() {
     }
 };
 
+function getVisitedOrBlacklisted() {
+    visitedRef.on("child_added", function (snapshot) {
+        // fires once for each value in database and once for each new value added
+        visitedRestaurants.push(JSON.parse(snapshot.val));
+    }, function (errorObject) {
+        console.log("Reading blacklisted data failed: " + errorObject.code);
+    });
+    blacklistRef.on("child_added", function (snapshot) {
+        // fires once for each value in database and once for each new value added
+        blacklistedRestaurants.push(JSON.parse(snapshot.val));
+    }, function (errorObject) {
+        console.log("Reading visited restaurants data failed: " + errorObject.code);
+    });
+    blacklistRef.on("child_added", function (snapshot) {
+        // fires once for each value in database and once for each new value added
+        blacklistedRestaurants.push(JSON.parse(snapshot.val));
+    }, function (errorObject) {
+        console.log("Reading visited restaurants data failed: " + errorObject.code);
+    });
+    allowRef.on("child_added", function (snapshot) {
+        // fires once for each value in database and once for each new value added
+        allowedRestaurants.push(JSON.parse(snapshot.val));
+    }, function (errorObject) {
+        console.log("Reading allowed restaurants data failed: " + errorObject.code);
+    });
+
+
+}
+
+// used for testing
+function createTestData() {
+    visitedRestaurants[0] = {
+        name: "Freds",
+        date: "3/3/2019",
+        cuisine: "fish and chips",
+        city: "Folsom"
+    }
+    visitedRestaurants[1] = {
+        name: "doobys",
+        date: "3/4/2019",
+        cuisine: "burgers",
+        city: "Folsom"
+    }
+    visitedRestaurants[2] = {
+        name: "McDonalds",
+        date: "3/5/2019",
+        cuisine: "burgers",
+        city: "San Francisco"
+    }
+
+}
+
+function updateTable() {
+
+    // clear table
+    $("#winnersTableBody").empty();
+    for (var i = 0; i < visitedRestaurants.length; i++) {
+        // add information on visited restaurants
+        var newRow = $("<tr>");
+        newRow.append($("<td>").text(visitedRestaurants[i].name));
+        newRow.append($("<td>").text(visitedRestaurants[i].date));
+        newRow.append($("<td>").text(visitedRestaurants[i].cuisine));
+        newRow.append($("<td>").text(visitedRestaurants[i].city));
+        // create buttons for allow
+        var newAllowButton = $("<button>");
+        newAllowButton.attr("id", "allow" + String(i));
+        newAllowButton.attr("data-value", i);
+        newAllowButton.addClass("allowButton");
+        newAllowButton.text("allow");
+        var temp = ($("<td>")).append(newAllowButton);
+        newRow.append(temp);
+
+
+        var newBlacklistButton = $("<button>");
+        newBlacklistButton.attr("id", "blacklist" + String(i));
+        newBlacklistButton.attr("data-value", i);
+        newBlacklistButton.addClass("blacklistButton");
+        newBlacklistButton.text("never again");
+        temp = ($("<td>")).append(newBlacklistButton);
+        newRow.append(temp);
+        // add to table
+        $("#winnersTableBody").append(newRow);
+
+    }
+    // add button listeners
+    $(".allowButton").off("click");
+    $(".allowButton").on("click", function () {
+        console.log("Allow button pressed row " + $(this).attr("data-value"));
+    });
+    $(".blacklistButton").off("click");
+    $(".blacklistButton").on("click", function () {
+        console.log("Never again button pressed row " + $(this).attr("data-value"));
+    });
+
+}
+
 
 // Geolocation
 // Geolocation takes time so need to call main() function after geolocation has completed
@@ -197,3 +312,6 @@ function main(currentLatitude, currentLongitude) {
     setupDistanceRating();
 }
 getLocation();
+createTestData();
+// getVisitedOrBlacklisted();
+updateTable();
