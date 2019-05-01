@@ -177,25 +177,26 @@ function createRestArray() {
 function getVisitedOrBlacklisted() {
     visitedRef.on("child_added", function (snapshot) {
         // fires once for each value in database and once for each new value added
-        visitedRestaurants.push(JSON.parse(snapshot.val));
+        console.log("get visited " + snapshot.val());
+        visitedRestaurants.push(JSON.parse(snapshot.val()));
     }, function (errorObject) {
         console.log("Reading blacklisted data failed: " + errorObject.code);
     });
     blacklistRef.on("child_added", function (snapshot) {
         // fires once for each value in database and once for each new value added
-        blacklistedRestaurants.push(JSON.parse(snapshot.val));
+        blacklistedRestaurants.push(JSON.parse(snapshot.val()));
     }, function (errorObject) {
         console.log("Reading visited restaurants data failed: " + errorObject.code);
     });
     blacklistRef.on("child_added", function (snapshot) {
         // fires once for each value in database and once for each new value added
-        blacklistedRestaurants.push(JSON.parse(snapshot.val));
+        blacklistedRestaurants.push(JSON.parse(snapshot.val()));
     }, function (errorObject) {
         console.log("Reading visited restaurants data failed: " + errorObject.code);
     });
     allowRef.on("child_added", function (snapshot) {
         // fires once for each value in database and once for each new value added
-        allowedRestaurants.push(JSON.parse(snapshot.val));
+        allowedRestaurants.push(JSON.parse(snapshot.val()));
     }, function (errorObject) {
         console.log("Reading allowed restaurants data failed: " + errorObject.code);
     });
@@ -311,7 +312,7 @@ function locationError(error) {
             break;
     }
 }
-
+getVisitedOrBlacklisted();
 function main(currentLatitude, currentLongitude) {
     console.log("Latitude: " + currentLatitude);
     console.log("Longitude: " + currentLongitude);
@@ -319,10 +320,12 @@ function main(currentLatitude, currentLongitude) {
     console.log(navigator)
     getCuisines(currentLatitude,currentLongitude);
     setupDistanceRating();
+
+    getVisitedOrBlacklisted();
+
+    updateTable();
+
 }
 getLocation();
-createTestData();
-createDummyDataBase();
-//getVisitedOrBlacklisted();
-
-updateTable();
+//createTestData();
+//createDummyDataBase();
