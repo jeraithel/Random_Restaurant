@@ -201,8 +201,17 @@ function getVisitedOrBlacklisted() {
     });
 
 
+
+
 }
 
+
+// used for testing
+function createDummyDataBase(){
+    for (i = 0; i < visitedRestaurants.length; i++) {
+        visitedRef.push( JSON.stringify(visitedRestaurants[i]) );
+    }
+}
 // used for testing
 function createTestData() {
     visitedRestaurants[0] = {
@@ -313,5 +322,7 @@ function main(currentLatitude, currentLongitude) {
 }
 getLocation();
 createTestData();
-// getVisitedOrBlacklisted();
+createDummyDataBase();
+//getVisitedOrBlacklisted();
+
 updateTable();
