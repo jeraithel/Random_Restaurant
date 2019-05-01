@@ -20,56 +20,9 @@ var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
-<<<<<<< HEAD
 
 var userDistance = 7;
 var userRating = 3;
-
-function getCuisines (lat,long) {
-
-console.log ("Inside getCuisines Lat: " + lat);
-console.log ("Inside getCuisines Lat: " + long);
-var cuisineQuery = "https:developers.zomato.com/api/v2.1/cuisines?lat=" + lat + "&lon=" + long;
-var geoQuery = "https:developers.zomato.com/api/v2.1/geocode?lat=" + lat + "&lon=" + long;
-
-$.ajax({
-    url: geoQuery,
-    method: "GET",
-    beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI) }
-}).then(function (response) {
-    console.log(response.nearby_restaurants);
-    console.log(response.nearby_restaurants[0].restaurant.name);
-    for (let i=0; i < response.nearby_restaurants.length; i++) {
-        // create arrays of each cuisine to compare them 
-    }
-
-});
-
-$.ajax({
-    url: cuisineQuery,
-    method: "GET",
-    beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI) }
-}).then(function (response) {
-    console.log(response.cuisines);
-    console.log(response.cuisines[0].cuisine.cuisine_name);
-    for (let i=0; i < response.cuisines.length; i++) {
-        var menuItem = $("<a>");
-        menuItem.text(response.cuisines[i].cuisine.cuisine_name);
-        menuItem.addClass("dropdown-item");
-        menuItem.addClass("cuisine1");
-        menuItem.attr("data", response.cuisines[i].cuisine.cuisine_name);
-        $("#dropdown-menu1").append(menuItem);
-    };
-    for (let i=0; i < response.cuisines.length; i++) {
-        var menuItem = $("<a>");
-        menuItem.text(response.cuisines[i].cuisine.cuisine_name);
-        menuItem.addClass("dropdown-item");
-        menuItem.addClass("cuisine2");
-        menuItem.attr("data", response.cuisines[i].cuisine.cuisine_name);
-        $("#dropdown-menu2").append(menuItem);
-    };
-});
-=======
 var restaurants = {};
 
 function getCuisines(lat, long) {
@@ -114,7 +67,6 @@ function getCuisines(lat, long) {
         console.log(response.nearby_restaurants);
         console.log(response.nearby_restaurants[0].restaurant.name);
     });
->>>>>>> 712641ffcc0b421b87e025d49b744da40a439d6c
 };
 
 $(document).on("click", ".cuisine1", function () {
@@ -129,7 +81,6 @@ $(document).on("click", ".cuisine2", function () {
     createRestArray();
 });
 
-<<<<<<< HEAD
 // reads defaults from local storage, then sets up listeners on buttons
 function setupDistanceRating() {
     console.log("setup distance and rating");
@@ -180,7 +131,6 @@ function setupDistanceRating() {
 
     
 }
-=======
 function createRestArray() {
     console.log("----Creation Restaurant Array----");
     console.log(restaurants.length);
@@ -206,7 +156,6 @@ function createRestArray() {
 };
 
 
->>>>>>> 712641ffcc0b421b87e025d49b744da40a439d6c
 // Geolocation
 // Geolocation takes time so need to call main() function after geolocation has completed
 
@@ -244,11 +193,7 @@ function main(currentLatitude, currentLongitude) {
     console.log("Longitude: " + currentLongitude);
 
     console.log(navigator)
-<<<<<<< HEAD
     getCuisines(currentLatitude,currentLongitude);
     setupDistanceRating();
-=======
-    getCuisines(currentLatitude, currentLongitude);
->>>>>>> 712641ffcc0b421b87e025d49b744da40a439d6c
 }
 getLocation();
