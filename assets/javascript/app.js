@@ -34,6 +34,8 @@ function goSearch() {
         method: "GET",
         beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI); },
     }).then(function (response) {
+        console.log ("ROB's API CALL ***********")
+        console.log (response.restaurants);
         for (let i = 0; i < response.restaurants.length; i++) {
             counter++;
             console.log("Presenting Restaurant #: " + counter);
@@ -88,10 +90,10 @@ function getCuisines(lat, long) {
         };
     });
 
-    var geoQuery = "https:developers.zomato.com/api/v2.1/geocode?lat=" + lat + "&lon=" + long;
+    var geoQuery2 = "https:developers.zomato.com/api/v2.1/geocode?lat=" + lat + "&lon=" + long;
 
     $.ajax({
-        url: geoQuery,
+        url: geoQuery2,
         method: "GET",
         beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI) }
     }).then(function (response) {
@@ -233,10 +235,10 @@ function main(currentLatitude, currentLongitude) {
     totalSearch = 140;
 
     // this for loop gets multiple queries completed
-    console.log("GeoQuery: " + geoQuery);
     console.log(searchType);
     for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
-        geoQuery = "https:developers.zomato.com/api/v2.1/" + searchType + "?lat =" + currentLatitude + "&lon=" + currentLongitude + "&start=" + searchStart + "&count=" + searchCount + "&sort=real_distance";
+        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
+        console.log("GeoQuery: " + geoQuery);
         goSearch();
     }
 }
