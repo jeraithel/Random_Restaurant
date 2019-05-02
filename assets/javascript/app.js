@@ -208,23 +208,23 @@ function createRestArray() {
 
 function getVisitedOrBlacklisted() {
     visitedRef.on("value", function (snapshot) {
-        console.log("get visited " + snapshot.val().data);
+        // console.log("get visited " + snapshot.val().data);
         visitedRestaurants = JSON.parse(snapshot.val().data);
-        console.log("visited blacklist " + blacklistedRestaurants + " allowed "+ allowedRestaurants);
+        // console.log("visited  " + visitedRestaurants + " allowed "+ allowedRestaurants);
         updateTable();
     }, function (errorObject) {
         console.log("Reading visited data failed: " + errorObject.code);
     });
     blacklistRef.on("value", function (snapshot) {
         blacklistedRestaurants = JSON.parse(snapshot.val().data);
-        console.log( "blacklist " + blacklistedRestaurants.length + " " + blacklistedRestaurants);
+        // console.log( "blacklist " + blacklistedRestaurants.length + " " + blacklistedRestaurants);
         updateTable();
     }, function (errorObject) {
         console.log("Reading blacklisted restaurants data failed: " + errorObject.code);
     });
     allowRef.on("value", function (snapshot) {
         allowedRestaurants = JSON.parse(snapshot.val().data);
-        console.log("allow " + allowedRestaurants.length + " " + allowedRestaurants);
+        // console.log("allow " + allowedRestaurants.length + " " + allowedRestaurants);
         updateTable();
     }, function (errorObject) {
         console.log("Reading allowed restaurants data failed: " + errorObject.code);
@@ -285,9 +285,16 @@ function inArray(rName, rArray) {
 function createDummyDataBase(){
     console.log("Create dummy database " + JSON.stringify(visitedRestaurants));
     visitedRef.set( {data: JSON.stringify(visitedRestaurants)} );
-    allowRef.set({ data: JSON.stringify(allowedRestaurants)});
-    blacklistRef.set({ data: JSON.stringify(blacklistedRestaurants) });
+    allowRef.set({ data: JSON.stringify([])});
+    blacklistRef.set({ data: JSON.stringify([]) });
     
+}
+// utility function for debugging
+function clearDatabase () {
+    console.log("Firebase atabase reset");
+    visitedRef.set({ data: JSON.stringify([]) });
+    allowRef.set({ data: JSON.stringify([]) });
+    blacklistRef.set({ data: JSON.stringify([]) });
 }
 // used for testing, not part of main flow
 function createTestData() {
@@ -330,10 +337,18 @@ function updateTable() {
         newRow.append($("<td>").text(visitedRestaurants[i].cuisine));
         newRow.append($("<td>").text(visitedRestaurants[i].city));
 
+        // console.log("Update table " + visitedRestaurants[i].name + " allowed " + JSON.stringify(allowedRestaurants));
         if (inArray(visitedRestaurants[i].name, allowedRestaurants)) {
             // in allow list, create td with green background
             var aTemp = ($("<td>"));
             aTemp.css("background", "lightgreen");
+            
+            var newAllowRevertButton = $("<button>");
+            newAllowRevertButton.attr("id", "allowRevert" + String(i));
+            newAllowRevertButton.attr("data-value", i);
+            newAllowRevertButton.addClass("allowRevertButton btn btn-dark");
+            newAllowRevertButton.text("revert");
+            aTemp.append(newAllowRevertButton);
             newRow.append(aTemp);
         }
         else {
@@ -351,6 +366,13 @@ function updateTable() {
             // blacklisted create td with red background
             var bTemp = ($("<td>"));
             bTemp.css("background", "lightcoral");
+            // add revert button
+            var newBlacklistRevertButton = $("<button>");
+            newBlacklistRevertButton.attr("id", "blacklistRevert" + String(i));
+            newBlacklistRevertButton.attr("data-value", String(i));
+            newBlacklistRevertButton.addClass("blacklistRevertButton btn btn-dark");
+            newBlacklistRevertButton.text("revert");
+            bTemp.append(newBlacklistRevertButton);
             newRow.append(bTemp);
         }
         else {
@@ -371,9 +393,22 @@ function updateTable() {
     $(".allowButton").on("click", function () {
         var rowNumber = $(this).attr("data-value");
         console.log("Allow button pressed row " + rowNumber);
-        console.log( visitedRestaurants[ rowNumber].name);
+        // console.log( visitedRestaurants[ rowNumber].name);
         allowedRestaurants.unshift(visitedRestaurants[rowNumber] );
         allowRef.set({ data: JSON.stringify(allowedRestaurants) });
+    });
+    $(".allowRevertButton").off("click");
+    $(".allowRevertButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log(" reverting allow " + visitedRestaurants[rowNumber].name);
+        // remove restaurant from allowed list
+        for (var i = 0; i < allowedRestaurants.length; i++) {
+            if (allowedRestaurants[i].name === visitedRestaurants[rowNumber].name) {
+                allowedRestaurants.splice(i,1);
+                allowRef.set({ data: JSON.stringify(allowedRestaurants) });
+                break;
+            }
+        }    
     });
     $(".blacklistButton").off("click");
     $(".blacklistButton").on("click", function () {
@@ -382,6 +417,19 @@ function updateTable() {
         console.log(visitedRestaurants[rowNumber].name);
         blacklistedRestaurants.unshift(visitedRestaurants[rowNumber]);
         blacklistRef.set({ data: JSON.stringify(blacklistedRestaurants) });
+    });
+    $(".blacklistRevertButton").off("click");
+    $(".blacklistRevertButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log(" reverting blacklist " + visitedRestaurants[rowNumber].name);
+        // remove restaurant from allowed list
+        for (var i = 0; i < blacklistedRestaurants.length; i++) {
+            if (blacklistedRestaurants[i].name === visitedRestaurants[rowNumber].name) {
+                blacklistedRestaurants.splice(i, 1);
+                blacklistRef.set({ data: JSON.stringify(blacklistedRestaurants) });
+                break;
+            }
+        }
     });
 
 }
@@ -421,6 +469,7 @@ function locationError(error) {
 // get information from firebase 
 getVisitedOrBlacklisted();
 
+// clearDatabase();
 // createTestData();
 // createDummyDataBase();
 
@@ -436,9 +485,9 @@ function main(currentLatitude, currentLongitude) {
 
     
     
-    // getVisitedOrBlacklisted();
-    addVisitedRestaurant("Here", "3/14/2019", "burger", "Folsom");
-    addVisitedRestaurant("Now", "3/14/2019", "burger", "Folsom");
+    
+    // addVisitedRestaurant("Here", "3/14/2019", "burger", "Folsom");
+    // addVisitedRestaurant("Now", "3/14/2019", "burger", "Folsom");
 
     searchType = "search";
     searchStart = 0;
@@ -446,12 +495,12 @@ function main(currentLatitude, currentLongitude) {
     totalSearch = 140;
 
     // this for loop gets multiple queries completed
-    console.log(searchType);
-    for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
-        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
-        console.log("GeoQuery: " + geoQuery);
-        goSearch();
-    }
+    // console.log(searchType);
+    // for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
+    //     geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
+    //     console.log("GeoQuery: " + geoQuery);
+    //     goSearch();
+    // }
 }
 
 getLocation();
