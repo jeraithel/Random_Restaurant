@@ -60,7 +60,7 @@ function goSearch() {
             console.log("Presenting Restaurant #: " + counter);
             console.log("Restaurant Name: " + response.restaurants[i].restaurant.name);
             console.log("i = " + i);
-            var tBody = $("tbody");
+            var tBody = $("#debugTableBody");
             var tRow = $("<tr>");
             // Methods run on jQuery selectors return the selector they we run on
             // This is why we can create and save a reference to a td in the same statement we update its text
@@ -483,11 +483,7 @@ function main(currentLatitude, currentLongitude) {
     getCuisines(currentLatitude, currentLongitude);
     setupDistanceRating();
 
-    
-    
-    
-    // addVisitedRestaurant("Here", "3/14/2019", "burger", "Folsom");
-    // addVisitedRestaurant("Now", "3/14/2019", "burger", "Folsom");
+
 
     searchType = "search";
     searchStart = 0;
@@ -495,12 +491,12 @@ function main(currentLatitude, currentLongitude) {
     totalSearch = 140;
 
     // this for loop gets multiple queries completed
-    // console.log(searchType);
-    // for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
-    //     geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
-    //     console.log("GeoQuery: " + geoQuery);
-    //     goSearch();
-    // }
+    console.log(searchType);
+    for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
+        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
+        console.log("GeoQuery: " + geoQuery);
+        goSearch();
+    }
 }
 
 getLocation();
