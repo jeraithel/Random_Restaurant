@@ -39,7 +39,7 @@ var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
 var currentCuisines = [];
-console.log ("++++++Starting Cuisines Array++++");
+console.log("++++++Starting Cuisines Array++++");
 console.log(currentCuisines);
 
 var userDistance = 7;
@@ -78,12 +78,7 @@ function goSearch() {
             // Append the newly created table data to the table row
             tRow.append(restName, restAddress, restCuisines);
             // Append the table row to the table body
-            tBody.append(tRow);
-
-
-
-
-            
+            // tBody.append(tRow);
             restaurants.push(response.restaurants[i]);
             // console.log("Object of All Restaurants: ");
             // console.log(restaurants);
@@ -101,8 +96,8 @@ function getCuisines() {
         var cuisineSplit = restaurants[i].restaurant.cuisines.split(", ");
         console.log(cuisineSplit);
         for (let i = 0; i < cuisineSplit.length; i++) {
-            console.log ("Cuisine Test: " + cuisineSplit[i]);
-            console.log (currentCuisines);
+            console.log("Cuisine Test: " + cuisineSplit[i]);
+            console.log(currentCuisines);
             if (currentCuisines.includes(cuisineSplit[i])) {
                 console.log(cuisineSplit[i] + " already included");
             }
@@ -113,7 +108,7 @@ function getCuisines() {
         }
     };
     currentCuisines.sort();
-    console.log ("Length: " + currentCuisines.length);
+    console.log("Length: " + currentCuisines.length);
     for (let i = 0; i < currentCuisines.length; i++) {
         var menuItem = $("<a>");
         menuItem.text(currentCuisines[i]);
@@ -133,12 +128,18 @@ function getCuisines() {
 };
 
 $(document).on("click", ".cuisine1", function () {
+    cuisine1 = [];
+    cuisine2 = [];
+    cuisineCombined = [];
     var cuisineSelection = $(this).attr("data");
     $("#cuisine-button1").text(cuisineSelection);
     createRestArray();
 });
 
 $(document).on("click", ".cuisine2", function () {
+    cuisine1 = [];
+    cuisine2 = [];
+    cuisineCombined = [];
     var cuisineSelection = $(this).attr("data");
     $("#cuisine-button2").text(cuisineSelection);
     createRestArray();
@@ -214,25 +215,32 @@ function setupDistanceRating() {
 function createRestArray() {
     console.log("----Creation Restaurant Array----");
     console.log(restaurants.length);
-    cuisine1 = [];
-    cuisine2 = [];
     var j = 0;
     var k = 0;
     for (let i = 0; i < restaurants.length; i++) {
-        console.log("danger: " + restaurants[i].restaurant.cuisines);
-        if (restaurants[i].restaurant.cuisines.includes($("#cuisine-button1").text())) {
+        // console.log("danger: " + restaurants[i].restaurant.cuisines);
+        if (restaurants[i].restaurant.cuisines.includes($("#cuisine-button1").text()) && validRestaurant(restaurants[i].restaurant.name)) {
             j++;
-            console.log("restaurants in cuisine 1: " + j);
             cuisine1.push(restaurants[i].restaurant.name);
-            console.log("Restaurants in Cuisine 1: " + cuisine1);
         }
-        else if (restaurants[i].restaurant.cuisines.includes($("#cuisine-button2").text())) {
+        if (restaurants[i].restaurant.cuisines.includes($("#cuisine-button2").text()) && validRestaurant(restaurants[i].restaurant.name)) {
             k++;
-            console.log("restaurants in cuisine 2: " + k);
             cuisine2.push(restaurants[i].restaurant.name);
-            console.log("Restaurants in Cuisine 2: " + cuisine2);
         }
     }
+    console.log("restaurants in cuisine 1: " + j);
+    console.log("restaurants in cuisine 2: " + k);
+    l = Math.min(j, k);
+    console.log("max restaurants in either cuisine: " + l);
+    cuisineCombined = [];
+    for (maxChoices = 0; maxChoices < l; maxChoices++) {
+        cuisineCombined.push(cuisine1[maxChoices]);
+    }
+    for (maxChoices = 0; maxChoices < l; maxChoices++) {
+        cuisineCombined.push(cuisine2[maxChoices]);
+    }
+    console.log("-------Restaurant Choices-------");
+    console.log(cuisineCombined);
 };
 
 function getVisitedOrBlacklisted() {
@@ -265,7 +273,7 @@ function getVisitedOrBlacklisted() {
 }
 
 // adds restaurant to the visited list and updates database
-function addVisitedRestaurant( name, date, cuisine, city) {
+function addVisitedRestaurant(name, date, cuisine, city) {
     // add to front of array so keep in date order
     // for (var i = 0; i < visitedRestaurants.length; i++) {
     //     console.log("Before " + i + " " + JSON.stringify(visitedRestaurants[i]));
@@ -285,12 +293,12 @@ function addVisitedRestaurant( name, date, cuisine, city) {
 }
 
 // function returns a boolean - true if restaurant has not been visited, blacklisted or is in allow list
-function validRestaurant (rName) {
+function validRestaurant(rName) {
     // if in allow list, return true
     if (inArray(rName, allowedRestaurants)) {
         return true;
     }
-    if ( inArray(rName, visitedRestaurants) || inArray( rName, blacklistedRestaurants)) {
+    if (inArray(rName, visitedRestaurants) || inArray(rName, blacklistedRestaurants)) {
         return false;
     }
     else {
@@ -301,7 +309,7 @@ function validRestaurant (rName) {
 }
 // check whether a restaurant name is present in an array
 function inArray(rName, rArray) {
-    for( var i = 0; i < rArray.length ; i++) {
+    for (var i = 0; i < rArray.length; i++) {
         if (rArray[i].name === rName) {
             return true;
         }
@@ -311,15 +319,15 @@ function inArray(rName, rArray) {
 }
 
 // used for testing, not part of main flow
-function createDummyDataBase(){
+function createDummyDataBase() {
     console.log("Create dummy database " + JSON.stringify(visitedRestaurants));
-    visitedRef.set( {data: JSON.stringify(visitedRestaurants)} );
-    allowRef.set({ data: JSON.stringify([])});
+    visitedRef.set({ data: JSON.stringify(visitedRestaurants) });
+    allowRef.set({ data: JSON.stringify([]) });
     blacklistRef.set({ data: JSON.stringify([]) });
-    
+
 }
 // utility function for debugging
-function clearDatabase () {
+function clearDatabase() {
     console.log("Firebase atabase reset");
     visitedRef.set({ data: JSON.stringify([]) });
     allowRef.set({ data: JSON.stringify([]) });
@@ -345,7 +353,7 @@ function createTestData() {
         cuisine: "burgers",
         city: "San Francisco"
     }
-    visitedRestaurants[3]= {
+    visitedRestaurants[3] = {
         name: "Murder burger",
         date: "1/4/19",
         cuisine: "burgers",
@@ -371,7 +379,7 @@ function updateTable() {
             // in allow list, create td with green background
             var aTemp = ($("<td>"));
             aTemp.css("background", "lightgreen");
-            
+
             var newAllowRevertButton = $("<button>");
             newAllowRevertButton.attr("id", "allowRevert" + String(i));
             newAllowRevertButton.attr("data-value", i);
@@ -423,7 +431,7 @@ function updateTable() {
         var rowNumber = $(this).attr("data-value");
         console.log("Allow button pressed row " + rowNumber);
         // console.log( visitedRestaurants[ rowNumber].name);
-        allowedRestaurants.unshift(visitedRestaurants[rowNumber] );
+        allowedRestaurants.unshift(visitedRestaurants[rowNumber]);
         allowRef.set({ data: JSON.stringify(allowedRestaurants) });
     });
     $(".allowRevertButton").off("click");
@@ -433,11 +441,11 @@ function updateTable() {
         // remove restaurant from allowed list
         for (var i = 0; i < allowedRestaurants.length; i++) {
             if (allowedRestaurants[i].name === visitedRestaurants[rowNumber].name) {
-                allowedRestaurants.splice(i,1);
+                allowedRestaurants.splice(i, 1);
                 allowRef.set({ data: JSON.stringify(allowedRestaurants) });
                 break;
             }
-        }    
+        }
     });
     $(".blacklistButton").off("click");
     $(".blacklistButton").on("click", function () {
