@@ -33,9 +33,8 @@ console.log(moment());
 var currentLatitude = 0;
 var currentLongitude = 0;
 var geoQuery;
-// var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
-var zAPI = "6b7a0827c3398a3d31d61d19498285ac";
-var mapboxAPI = "pk.eyJ1Ijoiam9obmxvYnN0ZXIiLCJhIjoiY2p2NzY0dXZhMGNrcTRkbnRsczB2dmoyMSJ9.CoNbhJ5cOMwdsr3PCFy-XA";
+// var robs-zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
+var zAPI = '6b7a0827c3398a3d31d61d19498285ac';
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
@@ -50,6 +49,8 @@ var blacklistedRestaurants = [];
 var visitedRestaurants = [];
 var allowedRestaurants = [];
 var counter = 0;
+var rand = 0;
+var winner = [];
 
 function goSearch() {
     console.log('searching...')
@@ -147,7 +148,19 @@ $(document).on("click", ".cuisine2", function () {
 $(document).on("click", "#chooseButton", function (event) {
     event.preventDefault();
     console.log("Choose Button Clicked");
+    rand = cuisineCombined[Math.floor(Math.random() * cuisineCombined.length)];
+    console.log("rob - Winner: " + rand);
+    winner = cuisineCombined[rand];
+    console.log(restaurants);
+    winner = restaurants.filter(function(restaurant) {
+        return restaurant.restaurant.name === rand;
+    })
+    console.log("winner details: " + JSON.stringify(winner));
+    console.log("Name: " + winner[0].restaurant.name);
+    console.log("Address: " + winner[0].restaurant.location.address);
+    console.log("Rating: " + winner[0].restaurant.user_rating.rating_text);
 });
+
 
 
 // reads defaults from local storage, then sets up listeners on buttons
@@ -549,7 +562,7 @@ function main(currentLatitude, currentLongitude) {
     searchType = "search";
     searchStart = 0;
     searchCount = 20;
-    totalSearch = 140;
+    totalSearch = 40;
 
     // this for loop gets multiple queries completed
     console.log(searchType);
