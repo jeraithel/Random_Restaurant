@@ -21,10 +21,13 @@ var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
+var currentCuisines = [];
+console.log ("++++++Starting Cuisines Array++++");
+console.log(currentCuisines);
 
 var userDistance = 7;
 var userRating = 3;
-var restaurants = {};
+var restaurants = [];
 var counter = 0;
 
 function goSearch() {
@@ -34,13 +37,13 @@ function goSearch() {
         method: "GET",
         beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI); },
     }).then(function (response) {
-        console.log ("ROB's API CALL ***********")
-        console.log (response.restaurants);
+        // console.log("ROB's API CALL ***********")
+        // console.log(response.restaurants);
         for (let i = 0; i < response.restaurants.length; i++) {
             counter++;
-            console.log("Presenting Restaurant #: " + counter);
-            console.log("Restaurant Name: " + response.restaurants[i].restaurant.name);
-            console.log("i = " + i);
+            // console.log("Presenting Restaurant #: " + counter);
+            // console.log("Restaurant Name: " + response.restaurants[i].restaurant.name);
+            // console.log("i = " + i);
             var tBody = $("tbody");
             var tRow = $("<tr>");
             // Methods run on jQuery selectors return the selector they we run on
@@ -54,53 +57,51 @@ function goSearch() {
             tRow.append(restName, restAddress, restCuisines);
             // Append the table row to the table body
             tBody.append(tRow);
+            restaurants.push(response.restaurants[i]);
+            // console.log("Object of All Restaurants: ");
+            // console.log(restaurants);
         }
         console.log("Search Start: " + searchStart);
     });
 }
 
-function getCuisines(lat, long) {
+function getCuisines() {
 
-    console.log("Inside getCuisines Lat: " + lat);
-    console.log("Inside getCuisines Lat: " + long);
-    var cuisineQuery = "https:developers.zomato.com/api/v2.1/cuisines?lat=" + lat + "&lon=" + long;
-
-    $.ajax({
-        url: cuisineQuery,
-        method: "GET",
-        beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI) }
-    }).then(function (response) {
-        console.log(response.cuisines);
-        console.log(response.cuisines[0].cuisine.cuisine_name);
-        for (let i = 0; i < response.cuisines.length; i++) {
-            var menuItem = $("<a>");
-            menuItem.text(response.cuisines[i].cuisine.cuisine_name);
-            menuItem.addClass("dropdown-item");
-            menuItem.addClass("cuisine1");
-            menuItem.attr("data", response.cuisines[i].cuisine.cuisine_name);
-            $("#dropdown-menu1").append(menuItem);
-        };
-        for (let i = 0; i < response.cuisines.length; i++) {
-            var menuItem = $("<a>");
-            menuItem.text(response.cuisines[i].cuisine.cuisine_name);
-            menuItem.addClass("dropdown-item");
-            menuItem.addClass("cuisine2");
-            menuItem.attr("data", response.cuisines[i].cuisine.cuisine_name);
-            $("#dropdown-menu2").append(menuItem);
-        };
-    });
-
-    var geoQuery2 = "https:developers.zomato.com/api/v2.1/geocode?lat=" + lat + "&lon=" + long;
-
-    $.ajax({
-        url: geoQuery2,
-        method: "GET",
-        beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI) }
-    }).then(function (response) {
-        restaurants = response.nearby_restaurants;
-        console.log(response.nearby_restaurants);
-        console.log(response.nearby_restaurants[0].restaurant.name);
-    });
+    for (let i = 0; i < restaurants.length; i++) {
+        console.log("Cuisines");
+        console.log(restaurants[i].restaurant.cuisines);
+        var cuisineSplit = restaurants[i].restaurant.cuisines.split(", ");
+        console.log(cuisineSplit);
+        for (let i = 0; i < cuisineSplit.length; i++) {
+            console.log ("Cuisine Test: " + cuisineSplit[i]);
+            console.log (currentCuisines);
+            if (currentCuisines.includes(cuisineSplit[i])) {
+                console.log(cuisineSplit[i] + " already included");
+            }
+            else {
+                console.log("Adding: " + cuisineSplit[i]);
+                currentCuisines.push(cuisineSplit[i]);
+            }
+        }
+    };
+    currentCuisines.sort();
+    console.log ("Length: " + currentCuisines.length);
+    for (let i = 0; i < currentCuisines.length; i++) {
+        var menuItem = $("<a>");
+        menuItem.text(currentCuisines[i]);
+        menuItem.addClass("dropdown-item");
+        menuItem.addClass("cuisine1");
+        menuItem.attr("data", currentCuisines[i]);
+        $("#dropdown-menu1").append(menuItem);
+    }
+    for (let i = 0; i < currentCuisines.length; i++) {
+        var menuItem = $("<a>");
+        menuItem.text(currentCuisines[i]);
+        menuItem.addClass("dropdown-item");
+        menuItem.addClass("cuisine2");
+        menuItem.attr("data", currentCuisines[i]);
+        $("#dropdown-menu2").append(menuItem);
+    }
 };
 
 $(document).on("click", ".cuisine1", function () {
@@ -227,7 +228,7 @@ function main(currentLatitude, currentLongitude) {
     console.log("Longitude: " + currentLongitude);
 
     console.log(navigator);
-    getCuisines(currentLatitude, currentLongitude);
+    setTimeout(getCuisines, 2000);
     setupDistanceRating();
     searchType = "search";
     searchStart = 0;
@@ -237,7 +238,7 @@ function main(currentLatitude, currentLongitude) {
     // this for loop gets multiple queries completed
     console.log(searchType);
     for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
-        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
+        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType + "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
         console.log("GeoQuery: " + geoQuery);
         goSearch();
     }
