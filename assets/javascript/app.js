@@ -155,6 +155,9 @@ $(document).on("click", "#chooseButton", function (event) {
     winner = restaurants.filter(function(restaurant) {
         return restaurant.restaurant.name === rand;
     })
+    var todayDate = new Date();
+    todayString = todayDate.getMonth()+1 + "/" + todayDate.getDate() + "/" + todayDate.getFullYear();
+    addVisitedRestaurant(winner[0].restaurant.name, todayString, winner[0].restaurant.cuisines, winner[0].restaurant.location.locality)
     console.log("winner details: " + JSON.stringify(winner));
     console.log("Name: " + winner[0].restaurant.name);
     console.log("Address: " + winner[0].restaurant.location.address);
@@ -524,7 +527,7 @@ function main(currentLatitude, currentLongitude) {
     searchType = "search";
     searchStart = 0;
     searchCount = 20;
-    totalSearch = 40;
+    totalSearch = 120;
 
     // this for loop gets multiple queries completed
     console.log(searchType);
