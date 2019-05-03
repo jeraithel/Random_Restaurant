@@ -35,6 +35,7 @@ var currentLongitude = 0;
 var geoQuery;
 // var robs-zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
 var zAPI = '6b7a0827c3398a3d31d61d19498285ac';
+var mapboxAPI = "pk.eyJ1Ijoiam9obmxvYnN0ZXIiLCJhIjoiY2p2NzY0dXZhMGNrcTRkbnRsczB2dmoyMSJ9.CoNbhJ5cOMwdsr3PCFy-XA";
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
