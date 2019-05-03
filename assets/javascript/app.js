@@ -33,7 +33,8 @@ console.log(moment());
 var currentLatitude = 0;
 var currentLongitude = 0;
 var geoQuery;
-var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
+// var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
+var zAPI = "6b7a0827c3398a3d31d61d19498285ac";
 var mapboxAPI = "pk.eyJ1Ijoiam9obmxvYnN0ZXIiLCJhIjoiY2p2NzY0dXZhMGNrcTRkbnRsczB2dmoyMSJ9.CoNbhJ5cOMwdsr3PCFy-XA";
 var cuisine1 = [];
 var cuisine2 = [];
@@ -461,31 +462,37 @@ function getLocation() {
     }
 }
 
-function showWinner () {
+function showWinner (winnerObject) {
+    // console.log("in showWinner" + JSON.stringify(restaurants[0])); 
+    // console.log("in showWinner" + JSON.parse(restaurants));
+    
+ 
     // need to wait until all api fetches finish, 3 seconds
     var temp = setTimeout(function () {
-        console.log("Show modal");
+        
+        // console.log("Object " + winnerObject + JSON.stringify(winnerObject));
+        // console.log(JSON.stringify(winnerObject));
         $("#restaurantImage").attr("src", "assets/images/knifeAndFork.jpg");
-        // if ( JohnImg === "") {
+        // if ( winnerObject.restaurant.featured_image === "") {
         //     // use a generic image if no image available
         //     $("#restaurantImage").attr("src", "../images/knifeAndFork.img");
         // }
         // else {
-        //     $("#restaurantImage").attr("src", johnImg);
+        //     $("#restaurantImage").attr("src", winnerObject.restaurant.featured_image);
         // }
-        johnImg = "";
-        $("#winningRestaurant").text(johnName);
+        
+        $("#winningRestaurant").text(winnerObject.restaurant.name);
 
-        $("#winningCuisine").text("Cuisine : " + johnCuisine);
-        $("#restaurantAddress").text(johnAddr);
-        // johnLat = 38.6786100000;
-        // johnLong = -121.1755400000;
+        $("#winningCuisine").text("Cuisine : " + winnerObject.restaurant.cuisines);
+        $("#restaurantAddress").text(winnerObject.restaurant.location.address);
+        
+        console.log("Show modal");
         $("#winnerModal").modal({
             show: true
         });
         // wait until modal has shown before setting up map otherwise map appears in wrong place
         var temp2 = setTimeout(function () {
-            getMap();
+            getMap(winnerObject.restaurant.location.latitude, winnerObject.restaurant.location.longitude);
             $(".mapboxgl-missing-css").hide();
         }, 1000);
     }, 3000);
@@ -518,16 +525,16 @@ getVisitedOrBlacklisted();
 // createDummyDataBase();
 
 // uses mapbox to get a map image
-function getMap() {
+function getMap(lattitude, longitude) {
     mapboxgl.accessToken = mapboxAPI;
     var map = new mapboxgl.Map({
         container: "restaurantMap", // HTML container id
         style: 'mapbox://styles/mapbox/streets-v9', // style URL
-        center: [johnLong, johnLat], // starting position as [lng, lat]
+        center: [longitude, lattitude], // starting position as [lng, lat]
         zoom: 14
     });
     var marker = new mapboxgl.Marker()
-        .setLngLat([johnLong, johnLat])
+        .setLngLat([longitude, lattitude])
         .addTo(map);
 }
 
@@ -553,6 +560,15 @@ function main(currentLatitude, currentLongitude) {
         console.log("GeoQuery: " + geoQuery);
         goSearch();
     }
+
+    var temp=setTimeout( function () {
+        console.log("check first restaurant");
+        console.log(JSON.stringify(restaurants[0]));
+        showWinner( restaurants[0]);
+    }, 3000);
+    
+
+    
 
     
     
