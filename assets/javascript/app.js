@@ -53,8 +53,8 @@ function goSearch() {
         method: "GET",
         beforeSend: function (xhr) { xhr.setRequestHeader('user-key', zAPI); },
     }).then(function (response) {
-        console.log ("ROB's API CALL ***********")
-        console.log (response.restaurants);
+        console.log("ROB's API CALL ***********")
+        console.log(response.restaurants);
         for (let i = 0; i < response.restaurants.length; i++) {
             counter++;
             console.log("Presenting Restaurant #: " + counter);
@@ -133,6 +133,13 @@ $(document).on("click", ".cuisine2", function () {
     $("#cuisine-button2").text(cuisineSelection);
     createRestArray();
 });
+
+// click function for "Choose My Dinner" button
+$(document).on("click", "#chooseButton", function (event) {
+    event.preventDefault();
+    console.log("Choose Button Clicked");
+});
+
 
 // reads defaults from local storage, then sets up listeners on buttons
 function setupDistanceRating() {
@@ -493,7 +500,7 @@ function main(currentLatitude, currentLongitude) {
     // this for loop gets multiple queries completed
     console.log(searchType);
     for (let searchStart = 0; searchStart < totalSearch; searchStart += 20) {
-        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType +  "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
+        geoQuery = "https://developers.zomato.com/api/v2.1/" + searchType + "?start=" + searchStart + "&count=" + searchCount + "&lat=" + currentLatitude + "&lon=" + currentLongitude + "&sort=real_distance&order=asc";
         console.log("GeoQuery: " + geoQuery);
         goSearch();
     }
