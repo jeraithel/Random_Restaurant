@@ -1,7 +1,23 @@
 // Setup Firebase Config
 
-// drop firebase config above this line
-// firebase.initializeApp(config);
+// database created by John Webster
+// https://console.firebase.google.com/project/scratchdatabase/database/scratchdatabase/data
+var config = {
+    apiKey: "AIzaSyASaUqEw6TM_1v7LkG0iVZyDUI-WnTIUXg",
+    authDomain: "scratchdatabase.firebaseapp.com",
+    databaseURL: "https://scratchdatabase.firebaseio.com",
+    projectId: "scratchdatabase",
+    storageBucket: "scratchdatabase.appspot.com",
+    messagingSenderId: "652319313164"
+};
+
+firebase.initializeApp(config);
+var database = firebase.database();
+// using sampleUser for now, app could be upgraded to have database for each user
+var dbRef = database.ref("/randomRestaurant/sampleUser");
+var blacklistRef = database.ref("/randomRestaurant/sampleUser/blacklist");
+var visitedRef = database.ref("/randomRestaurant/sampleUser/visited");
+var allowRef = database.ref("/randomRestaurant/sampleUser/allow");
 
 // initializing moment.js
 moment().format();
@@ -28,6 +44,9 @@ console.log(currentCuisines);
 var userDistance = 7;
 var userRating = 3;
 var restaurants = [];
+var blacklistedRestaurants = [];
+var visitedRestaurants = [];
+var allowedRestaurants = [];
 var counter = 0;
 
 function goSearch() {
@@ -116,6 +135,13 @@ $(document).on("click", ".cuisine2", function () {
     createRestArray();
 });
 
+// click function for "Choose My Dinner" button
+$(document).on("click", "#chooseButton", function (event) {
+    event.preventDefault();
+    console.log("Choose Button Clicked");
+});
+
+
 // reads defaults from local storage, then sets up listeners on buttons
 function setupDistanceRating() {
     console.log("setup distance and rating");
@@ -188,6 +214,234 @@ function createRestArray() {
     }
 };
 
+function getVisitedOrBlacklisted() {
+    visitedRef.on("value", function (snapshot) {
+        // console.log("get visited " + snapshot.val().data);
+        visitedRestaurants = JSON.parse(snapshot.val().data);
+        // console.log("visited  " + visitedRestaurants + " allowed "+ allowedRestaurants);
+        updateTable();
+    }, function (errorObject) {
+        console.log("Reading visited data failed: " + errorObject.code);
+    });
+    blacklistRef.on("value", function (snapshot) {
+        blacklistedRestaurants = JSON.parse(snapshot.val().data);
+        // console.log( "blacklist " + blacklistedRestaurants.length + " " + blacklistedRestaurants);
+        updateTable();
+    }, function (errorObject) {
+        console.log("Reading blacklisted restaurants data failed: " + errorObject.code);
+    });
+    allowRef.on("value", function (snapshot) {
+        allowedRestaurants = JSON.parse(snapshot.val().data);
+        // console.log("allow " + allowedRestaurants.length + " " + allowedRestaurants);
+        updateTable();
+    }, function (errorObject) {
+        console.log("Reading allowed restaurants data failed: " + errorObject.code);
+    });
+
+
+
+
+}
+
+// adds restaurant to the visited list and updates database
+function addVisitedRestaurant( name, date, cuisine, city) {
+    // add to front of array so keep in date order
+    // for (var i = 0; i < visitedRestaurants.length; i++) {
+    //     console.log("Before " + i + " " + JSON.stringify(visitedRestaurants[i]));
+    // }
+    visitedRestaurants.unshift({
+        name: name,
+        date: date,
+        cuisine: cuisine,
+        city: city
+    });
+    // add to database
+    visitedRef.set({ data: JSON.stringify(visitedRestaurants) });
+    // for (var i=0; i < visitedRestaurants.length; i++) {
+    //     console.log(i + " " + JSON.stringify(visitedRestaurants[i])) ;
+    // }
+    // watcher will see this and update table
+}
+
+// function returns a boolean - true if restaurant has not been visited, blacklisted or is in allow list
+function validRestaurant (rName) {
+    // if in allow list, return true
+    if (inArray(rName, allowedRestaurants)) {
+        return true;
+    }
+    if ( inArray(rName, visitedRestaurants) || inArray( rName, blacklistedRestaurants)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+
+
+}
+// check whether a restaurant name is present in an array
+function inArray(rName, rArray) {
+    for( var i = 0; i < rArray.length ; i++) {
+        if (rArray[i].name === rName) {
+            return true;
+        }
+    }
+    // wasn't found return false
+    return false;
+}
+
+// used for testing, not part of main flow
+function createDummyDataBase(){
+    console.log("Create dummy database " + JSON.stringify(visitedRestaurants));
+    visitedRef.set( {data: JSON.stringify(visitedRestaurants)} );
+    allowRef.set({ data: JSON.stringify([])});
+    blacklistRef.set({ data: JSON.stringify([]) });
+    
+}
+// utility function for debugging
+function clearDatabase () {
+    console.log("Firebase atabase reset");
+    visitedRef.set({ data: JSON.stringify([]) });
+    allowRef.set({ data: JSON.stringify([]) });
+    blacklistRef.set({ data: JSON.stringify([]) });
+}
+// used for testing, not part of main flow
+function createTestData() {
+    visitedRestaurants[0] = {
+        name: "Freds",
+        date: "3/3/2019",
+        cuisine: "fish and chips",
+        city: "Folsom"
+    }
+    visitedRestaurants[1] = {
+        name: "doobys",
+        date: "3/4/2019",
+        cuisine: "burgers",
+        city: "Folsom"
+    }
+    visitedRestaurants[2] = {
+        name: "McDonalds",
+        date: "3/5/2019",
+        cuisine: "burgers",
+        city: "San Francisco"
+    }
+    visitedRestaurants[3]= {
+        name: "Murder burger",
+        date: "1/4/19",
+        cuisine: "burgers",
+        city: "Davis"
+    }
+
+}
+
+function updateTable() {
+
+    // clear table
+    $("#winnersTableBody").empty();
+    for (var i = 0; i < visitedRestaurants.length; i++) {
+        // add information on visited restaurants
+        var newRow = $("<tr>");
+        newRow.append($("<td>").text(visitedRestaurants[i].name));
+        newRow.append($("<td>").text(visitedRestaurants[i].date));
+        newRow.append($("<td>").text(visitedRestaurants[i].cuisine));
+        newRow.append($("<td>").text(visitedRestaurants[i].city));
+
+        // console.log("Update table " + visitedRestaurants[i].name + " allowed " + JSON.stringify(allowedRestaurants));
+        if (inArray(visitedRestaurants[i].name, allowedRestaurants)) {
+            // in allow list, create td with green background
+            var aTemp = ($("<td>"));
+            aTemp.css("background", "lightgreen");
+            
+            var newAllowRevertButton = $("<button>");
+            newAllowRevertButton.attr("id", "allowRevert" + String(i));
+            newAllowRevertButton.attr("data-value", i);
+            newAllowRevertButton.addClass("allowRevertButton btn btn-dark");
+            newAllowRevertButton.text("revert");
+            aTemp.append(newAllowRevertButton);
+            newRow.append(aTemp);
+        }
+        else {
+            // create buttons for allow
+            var newAllowButton = $("<button>");
+            newAllowButton.attr("id", "allow" + String(i));
+            newAllowButton.attr("data-value", i);
+            newAllowButton.addClass("allowButton btn btn-info");
+            newAllowButton.text("allow");
+            var temp = ($("<td>")).append(newAllowButton);
+            newRow.append(temp);
+        }
+
+        if (inArray(visitedRestaurants[i].name, blacklistedRestaurants)) {
+            // blacklisted create td with red background
+            var bTemp = ($("<td>"));
+            bTemp.css("background", "lightcoral");
+            // add revert button
+            var newBlacklistRevertButton = $("<button>");
+            newBlacklistRevertButton.attr("id", "blacklistRevert" + String(i));
+            newBlacklistRevertButton.attr("data-value", String(i));
+            newBlacklistRevertButton.addClass("blacklistRevertButton btn btn-dark");
+            newBlacklistRevertButton.text("revert");
+            bTemp.append(newBlacklistRevertButton);
+            newRow.append(bTemp);
+        }
+        else {
+            var newBlacklistButton = $("<button>");
+            newBlacklistButton.attr("id", "blacklist" + String(i));
+            newBlacklistButton.attr("data-value", String(i));
+            newBlacklistButton.addClass("blacklistButton btn btn-info");
+            newBlacklistButton.text("never again");
+            temp = ($("<td>")).append(newBlacklistButton);
+            newRow.append(temp);
+        }
+        // add to table
+        $("#winnersTableBody").append(newRow);
+
+    }
+    // add button listeners
+    $(".allowButton").off("click");
+    $(".allowButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log("Allow button pressed row " + rowNumber);
+        // console.log( visitedRestaurants[ rowNumber].name);
+        allowedRestaurants.unshift(visitedRestaurants[rowNumber] );
+        allowRef.set({ data: JSON.stringify(allowedRestaurants) });
+    });
+    $(".allowRevertButton").off("click");
+    $(".allowRevertButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log(" reverting allow " + visitedRestaurants[rowNumber].name);
+        // remove restaurant from allowed list
+        for (var i = 0; i < allowedRestaurants.length; i++) {
+            if (allowedRestaurants[i].name === visitedRestaurants[rowNumber].name) {
+                allowedRestaurants.splice(i,1);
+                allowRef.set({ data: JSON.stringify(allowedRestaurants) });
+                break;
+            }
+        }    
+    });
+    $(".blacklistButton").off("click");
+    $(".blacklistButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log("Never again button pressed row " + $(this).attr("data-value"));
+        console.log(visitedRestaurants[rowNumber].name);
+        blacklistedRestaurants.unshift(visitedRestaurants[rowNumber]);
+        blacklistRef.set({ data: JSON.stringify(blacklistedRestaurants) });
+    });
+    $(".blacklistRevertButton").off("click");
+    $(".blacklistRevertButton").on("click", function () {
+        var rowNumber = $(this).attr("data-value");
+        console.log(" reverting blacklist " + visitedRestaurants[rowNumber].name);
+        // remove restaurant from allowed list
+        for (var i = 0; i < blacklistedRestaurants.length; i++) {
+            if (blacklistedRestaurants[i].name === visitedRestaurants[rowNumber].name) {
+                blacklistedRestaurants.splice(i, 1);
+                blacklistRef.set({ data: JSON.stringify(blacklistedRestaurants) });
+                break;
+            }
+        }
+    });
+
+}
+
 
 // Geolocation
 // Geolocation takes time so need to call main() function after geolocation has completed
@@ -220,6 +474,12 @@ function locationError(error) {
             break;
     }
 }
+// get information from firebase 
+getVisitedOrBlacklisted();
+
+// clearDatabase();
+// createTestData();
+// createDummyDataBase();
 
 
 
@@ -230,6 +490,9 @@ function main(currentLatitude, currentLongitude) {
     console.log(navigator);
     setTimeout(getCuisines, 2000);
     setupDistanceRating();
+
+
+
     searchType = "search";
     searchStart = 0;
     searchCount = 20;
@@ -245,3 +508,10 @@ function main(currentLatitude, currentLongitude) {
 }
 
 getLocation();
+
+// console.log("Valid restaurant " + validRestaurant("Freds"));
+// console.log("Valid restaurant " + validRestaurant("Elephant"));
+// addVisitedRestaurant("Again", "3/13/2019", "burger","Folsom");
+// addVisitedRestaurant("and again", "3/13/2019", "burger", "Folsom");
+
+
