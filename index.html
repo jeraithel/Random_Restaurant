@@ -175,6 +175,45 @@
         </table>
     </div> -->
 
+    <!-- winning restaurant display, can activate with javascript -->
+    
+    <div class="modal fade" id="winnerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:90%;">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <h4 class="modal-title">The winner is <span id = "winningRestaurant"></span></h4><br>
+                    <button type="button" class="close" id="closeInstructions1" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row" >
+                            <h4 id="winningCuisine"></h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="" alt="restaurant picture" id="restaurantImage">
+                            </div>
+                            <div class="col-md-6" style="height:400px;">
+                                <div id="restaurantMap" style="height:400px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5 id="restaurantAddress"></h5>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button btn-sm" id="closeInstructions2" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
 
     <!-- jQuery and Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.4.0.js"
@@ -186,8 +225,11 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
         <!-- Jquery Modal  -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" /> -->
+
+    <!-- mapbox -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"> </script>
 
     <!-- Moment -->
     <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
