@@ -76,18 +76,18 @@ function goSearch() {
             tBody.append(tRow);
 
             // hack for testing remove this
-            if (i === (response.restaurants.length -1 )) {
-                // console.log("full response " + response.restaurants[i]);
-                console.log(geoQuery);
-                var myTemp = response.restaurants[i];
-                console.log("full response " + JSON.stringify(response.restaurants[i].restaurant));
-                johnImg = response.restaurants[i].restaurant.featured_image;
-                johnName = response.restaurants[i].restaurant.name;
-                johnLong = response.restaurants[i].restaurant.location.longitude;
-                johnLat = response.restaurants[i].restaurant.location.latitude;
-                johnCuisine = response.restaurants[i].restaurant.cuisines;
-                johnAddr = response.restaurants[i].restaurant.location.address;
-            }
+            // if (i === (response.restaurants.length -1 )) {
+            //     // console.log("full response " + response.restaurants[i]);
+            //     console.log(geoQuery);
+            //     var myTemp = response.restaurants[i];
+            //     console.log("full response " + JSON.stringify(response.restaurants[i].restaurant));
+            //     johnImg = response.restaurants[i].restaurant.featured_image;
+            //     johnName = response.restaurants[i].restaurant.name;
+            //     johnLong = response.restaurants[i].restaurant.location.longitude;
+            //     johnLat = response.restaurants[i].restaurant.location.latitude;
+            //     johnCuisine = response.restaurants[i].restaurant.cuisines;
+            //     johnAddr = response.restaurants[i].restaurant.location.address;
+            // }
         }
         console.log("Search Start: " + searchStart);
     });
@@ -461,6 +461,35 @@ function getLocation() {
     }
 }
 
+function showWinner () {
+    // need to wait until all api fetches finish, 3 seconds
+    var temp = setTimeout(function () {
+        console.log("Show modal");
+        $("#restaurantImage").attr("src", "assets/images/knifeAndFork.jpg");
+        // if ( JohnImg === "") {
+        //     // use a generic image if no image available
+        //     $("#restaurantImage").attr("src", "../images/knifeAndFork.img");
+        // }
+        // else {
+        //     $("#restaurantImage").attr("src", johnImg);
+        // }
+        johnImg = "";
+        $("#winningRestaurant").text(johnName);
+
+        $("#winningCuisine").text("Cuisine : " + johnCuisine);
+        $("#restaurantAddress").text(johnAddr);
+        // johnLat = 38.6786100000;
+        // johnLong = -121.1755400000;
+        $("#winnerModal").modal({
+            show: true
+        });
+        // wait until modal has shown before setting up map otherwise map appears in wrong place
+        var temp2 = setTimeout(function () {
+            getMap();
+            $(".mapboxgl-missing-css").hide();
+        }, 1000);
+    }, 3000);
+}
 function saveLocation(position) {
     main(position.coords.latitude, position.coords.longitude);
 }
@@ -525,25 +554,7 @@ function main(currentLatitude, currentLongitude) {
         goSearch();
     }
 
-    var temp= setTimeout( function() {
-        console.log("Show modal");
-        johnImg = "";
-        $("#winningRestaurant").text(johnName);
-        $("#restaurantImage").attr("src", johnImg);
-        $("#winningCuisine").text("Cuisine : " + johnCuisine);
-        $("#restaurantAddress").text(johnAddr);
-        // johnLat = 38.6786100000;
-        // johnLong = -121.1755400000;
-        
-        
-        $("#winnerModal").modal({
-            show: true
-        }); 
-        var temp2 = setTimeout(function () {
-            getMap();
-            $(".mapboxgl-missing-css").hide();
-        }, 1000);
-    }, 3000);
+    
     
 }
 
