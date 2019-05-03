@@ -160,6 +160,7 @@ $(document).on("click", "#chooseButton", function (event) {
     console.log("Name: " + winner[0].restaurant.name);
     console.log("Address: " + winner[0].restaurant.location.address);
     console.log("Rating: " + winner[0].restaurant.user_rating.rating_text);
+    showWinner(winner[0]);
 });
 
 
