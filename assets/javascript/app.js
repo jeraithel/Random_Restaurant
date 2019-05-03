@@ -463,15 +463,13 @@ function getLocation() {
 }
 
 function showWinner (winnerObject) {
-    // console.log("in showWinner" + JSON.stringify(restaurants[0])); 
-    // console.log("in showWinner" + JSON.parse(restaurants));
+    
     
  
     // need to wait until all api fetches finish, 3 seconds
     var temp = setTimeout(function () {
         
-        // console.log("Object " + winnerObject + JSON.stringify(winnerObject));
-        // console.log(JSON.stringify(winnerObject));
+        
         $("#restaurantImage").attr("src", "assets/images/knifeAndFork.jpg");
         // if ( winnerObject.restaurant.featured_image === "") {
         //     // use a generic image if no image available
@@ -495,7 +493,7 @@ function showWinner (winnerObject) {
             getMap(winnerObject.restaurant.location.latitude, winnerObject.restaurant.location.longitude);
             $(".mapboxgl-missing-css").hide();
         }, 1000);
-    }, 3000);
+    }, 2000);
 }
 function saveLocation(position) {
     main(position.coords.latitude, position.coords.longitude);
@@ -561,11 +559,12 @@ function main(currentLatitude, currentLongitude) {
         goSearch();
     }
 
-    var temp=setTimeout( function () {
-        console.log("check first restaurant");
-        console.log(JSON.stringify(restaurants[0]));
-        showWinner( restaurants[0]);
-    }, 3000);
+    // testing showWinner()
+    // var temp=setTimeout( function () {
+    //     console.log("check first restaurant");
+    //     console.log(JSON.stringify(restaurants[0]));
+    //     showWinner( restaurants[0]);
+    // }, 3000);
     
 
     
