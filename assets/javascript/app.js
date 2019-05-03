@@ -18,6 +18,7 @@ var currentLatitude = 0;
 var currentLongitude = 0;
 var geoQuery;
 var zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
+var mapboxAPI = "pk.eyJ1Ijoiam9obmxvYnN0ZXIiLCJhIjoiY2p2NzY0dXZhMGNrcTRkbnRsczB2dmoyMSJ9.CoNbhJ5cOMwdsr3PCFy-XA";
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
@@ -54,6 +55,20 @@ function goSearch() {
             tRow.append(restName, restAddress, restCuisines);
             // Append the table row to the table body
             tBody.append(tRow);
+
+            // hack for testing remove this
+            if (i === (response.restaurants.length -1 )) {
+                // console.log("full response " + response.restaurants[i]);
+                console.log(geoQuery);
+                var myTemp = response.restaurants[i];
+                console.log("full response " + JSON.stringify(response.restaurants[i].restaurant));
+                johnImg = response.restaurants[i].restaurant.featured_image;
+                johnName = response.restaurants[i].restaurant.name;
+                johnLong = response.restaurants[i].restaurant.location.longitude;
+                johnLat = response.restaurants[i].restaurant.location.latitude;
+                johnCuisine = response.restaurants[i].restaurant.cuisines;
+                johnAddr = response.restaurants[i].restaurant.location.address;
+            }
         }
         console.log("Search Start: " + searchStart);
     });
@@ -220,7 +235,19 @@ function locationError(error) {
     }
 }
 
-
+// uses mapbox to get a map image
+function getMap() {
+    mapboxgl.accessToken = mapboxAPI;
+    var map = new mapboxgl.Map({
+        container: "restaurantMap", // HTML container id
+        style: 'mapbox://styles/mapbox/streets-v9', // style URL
+        center: [johnLong, johnLat], // starting position as [lng, lat]
+        zoom: 14
+    });
+    var marker = new mapboxgl.Marker()
+        .setLngLat([johnLong, johnLat])
+        .addTo(map);
+}
 
 function main(currentLatitude, currentLongitude) {
     console.log("Latitude: " + currentLatitude);
@@ -241,6 +268,27 @@ function main(currentLatitude, currentLongitude) {
         console.log("GeoQuery: " + geoQuery);
         goSearch();
     }
+
+    var temp= setTimeout( function() {
+        console.log("Show modal");
+        johnImg = "";
+        $("#winningRestaurant").text(johnName);
+        $("#restaurantImage").attr("src", johnImg);
+        $("#winningCuisine").text("Cuisine : " + johnCuisine);
+        $("#restaurantAddress").text(johnAddr);
+        // johnLat = 38.6786100000;
+        // johnLong = -121.1755400000;
+        
+        
+        $("#winnerModal").modal({
+            show: true
+        }); 
+        var temp2 = setTimeout(function () {
+            getMap();
+            $(".mapboxgl-missing-css").hide();
+        }, 1000);
+    }, 3000);
+    
 }
 
 getLocation();
