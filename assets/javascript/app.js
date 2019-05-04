@@ -35,6 +35,7 @@ var currentLongitude = 0;
 var geoQuery;
 // var robs-zAPI = 'bfe6cabea5affbbecd1d9161e766b35c';
 var zAPI = '6b7a0827c3398a3d31d61d19498285ac';
+var mapboxAPI = "pk.eyJ1Ijoiam9obmxvYnN0ZXIiLCJhIjoiY2p2NzY0dXZhMGNrcTRkbnRsczB2dmoyMSJ9.CoNbhJ5cOMwdsr3PCFy-XA";
 var cuisine1 = [];
 var cuisine2 = [];
 var cuisineCombined = [];
@@ -163,6 +164,7 @@ $(document).on("click", "#chooseButton", function (event) {
     console.log("Name: " + winner[0].restaurant.name);
     console.log("Address: " + winner[0].restaurant.location.address);
     console.log("Rating: " + winner[0].restaurant.user_rating.rating_text);
+    showWinner(winner[0]);
 });
 
 
@@ -517,7 +519,7 @@ function showWinner (winnerObject) {
             getMap(winnerObject.restaurant.location.latitude, winnerObject.restaurant.location.longitude);
             $(".mapboxgl-missing-css").hide();
         }, 1000);
-    }, 2000);
+    }, 1000);
 }
 function saveLocation(position) {
     main(position.coords.latitude, position.coords.longitude);
