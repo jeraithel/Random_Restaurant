@@ -519,7 +519,7 @@ function showWinner (winnerObject) {
             getMap(winnerObject.restaurant.location.latitude, winnerObject.restaurant.location.longitude);
             $(".mapboxgl-missing-css").hide();
         }, 1000);
-    }, 2000);
+    }, 1000);
 }
 function saveLocation(position) {
     main(position.coords.latitude, position.coords.longitude);
